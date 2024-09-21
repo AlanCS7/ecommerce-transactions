@@ -1,7 +1,5 @@
 package dev.alancss.producer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.alancss.event.Order;
 import dev.alancss.event.PurchaseOrder;
 import dev.alancss.event.PurchaseOrderEvent;
@@ -16,28 +14,19 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class PurchaseOrderProducer {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, PurchaseOrderEvent> kafkaTemplate;
 
-    public PurchaseOrderProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+    public PurchaseOrderProducer(KafkaTemplate<String, PurchaseOrderEvent> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
-        this.objectMapper = objectMapper;
     }
 
     public void sendPurchaseOrder(Order order) {
-        try {
-            String jsonData = createPurchaseOrderEvent(order);
-            log.info("Sending event to purchase-orders topic");
-            kafkaTemplate.send("purchase-orders", jsonData);
-        } catch (JsonProcessingException e) {
-            log.error("Error serializing PurchaseOrderEvent: {}", e.getMessage());
-        }
-    }
-
-    private String createPurchaseOrderEvent(Order order) throws JsonProcessingException {
-        var purchaseOrder = new PurchaseOrder(order, OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        var purchaseOrder = new PurchaseOrder(order, timestamp);
         var purchaseOrderEvent = new PurchaseOrderEvent(purchaseOrder);
-        return objectMapper.writeValueAsString(purchaseOrderEvent);
+
+        log.info("Sending event to purchase-orders topic");
+        kafkaTemplate.send("purchase-orders", purchaseOrderEvent);
     }
 
 }
