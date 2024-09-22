@@ -1,0 +1,71 @@
+<configuration>
+
+    <appender name="JSON" class="ch.qos.logback.core.FileAppender">
+        <file>logs/purchase-order-events.json</file>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "Header": "%X{schema}",
+                        "Payload": "%message",
+                        "Metadata": {
+                        "Offset": "%X{offset}",
+                        "Partition": "%X{partition}",
+                        "Timestamp": "%X{timestamp}",
+                        "TimestampType": "%X{timestampType}",
+                        "Topic": "%X{topic}"
+                        }
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_JSON" class="ch.qos.logback.core.FileAppender">
+        <file>logs/purchase-order-events-error.json</file>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "Header": "%X{schema}",
+                        "Payload": "%message",
+                        "Metadata": {
+                        "Offset": "%X{offset}",
+                        "Partition": "%X{partition}",
+                        "Timestamp": "%X{timestamp}",
+                        "TimestampType": "%X{timestampType}",
+                        "Topic": "%X{topic}"
+                        }
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <logger name="dev.alancss.consumer.PurchaseOrderConsumer" level="INFO" additivity="true">
+        <appender-ref ref="JSON" />
+    </logger>
+
+    <logger name="dev.alancss.service.OrderService" level="ERROR" additivity="true">
+        <appender-ref ref="ERROR_JSON" />
+    </logger>
+
+    <logger name="dev.alancss.service.LoggingService" level="ERROR" additivity="true">
+        <appender-ref ref="ERROR_JSON" />
+    </logger>
+
+    <logger name="dev.alancss.service.LoggingService" level="INFO" additivity="true">
+        <appender-ref ref="JSON" />
+    </logger>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
