@@ -6,6 +6,7 @@ import dev.alancss.service.LoggingService;
 import dev.alancss.service.MetricsService;
 import dev.alancss.service.OrderService;
 import dev.alancss.util.MDCContextHelper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -27,6 +28,7 @@ public class PurchaseOrderConsumer {
     }
 
     @KafkaListener(topics = "purchase-orders", groupId = "purchase-orders-group", containerFactory = "kafkaListenerContainerFactory")
+    @CircuitBreaker(name = "purchaseOrderConsumer", fallbackMethod = "fallbackConsume")
     public void consume(ConsumerRecord<String, PurchaseOrderEvent> record, Acknowledgment acknowledgment) {
         MDCContextHelper.setMDC(record);
 
@@ -45,6 +47,11 @@ public class PurchaseOrderConsumer {
         });
 
         MDCContextHelper.clearMDC();
+    }
+
+    public void fallbackConsume(ConsumerRecord<String, PurchaseOrderEvent> record, Throwable t) {
+        log.error("Fallback: Unable to process the event: {}, error: {}", record.value(), t.getMessage());
+        // You may choose to store the event in a retry queue
     }
 }
 
