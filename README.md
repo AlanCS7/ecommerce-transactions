@@ -39,6 +39,13 @@ Os pedidos são modelados como documentos na coleção orders, contendo campos c
 
 ## Como Rodar o Sistema Localmente
 
+### Pré-requisitos
+
+Antes de rodar o sistema, certifique-se de ter os seguintes softwares instalados:
+
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
 ### Passos para Execução
 
 1. **Clone o repositório**:
