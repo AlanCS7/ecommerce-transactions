@@ -1,15 +1,22 @@
 package dev.alancss.service;
 
+import dev.alancss.common.PageResponse;
 import dev.alancss.event.OrderEvent;
 import dev.alancss.event.PurchaseOrderEvent;
+import dev.alancss.exception.ResourceNotFoundException;
 import dev.alancss.mapper.OrderMapper;
 import dev.alancss.model.Order;
 import dev.alancss.repository.OrderRepository;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -42,4 +49,40 @@ public class OrderService {
         log.info("Transaction stored successfully: {}", order);
     }
 
+    public PageResponse<Order> findAllOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Order> orders = orderRepository.findAll(pageable);
+
+        return new PageResponse<>(
+                orders.getContent(),
+                orders.getNumber(),
+                orders.getSize(),
+                orders.getTotalElements(),
+                orders.getTotalPages(),
+                orders.isFirst(),
+                orders.isLast()
+        );
+    }
+
+    public Order findByOrderId(String orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order with ID [%s] not found".formatted(orderId)));
+    }
+
+    public List<Order> findByCustomerId(String customerId) {
+        return orderRepository.findByCustomerId(customerId);
+    }
+
+    public List<Order> findByStatus(String status) {
+        return orderRepository.findByStatusIgnoreCase(status);
+    }
+
+    public void deleteById(String orderId) {
+        orderRepository.findById(orderId).ifPresentOrElse(
+                orderRepository::delete,
+                () -> {
+                    throw new ResourceNotFoundException("Order with ID [%s] not found".formatted(orderId));
+                }
+        );
+    }
 }

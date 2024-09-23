@@ -23,5 +23,5 @@ public class Order {
     private String timestamp;
 
     @Indexed(expireAfterSeconds = 2592000)
-    private Instant expiredOn;
+    private Instant createdAt;
 }
