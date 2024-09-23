@@ -4,6 +4,8 @@ import dev.alancss.event.OrderEvent;
 import dev.alancss.model.Order;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+
 @Component
 public class OrderMapper {
 
@@ -13,7 +15,8 @@ public class OrderMapper {
                 orderEvent.getCustomerId(),
                 orderEvent.getAmount(),
                 orderEvent.getStatus(),
-                orderEvent.getDate()
+                orderEvent.getDate(),
+                Instant.now()
         );
     }
 }
