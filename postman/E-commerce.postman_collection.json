@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "a0d8e648-287a-4647-9b93-69b3d022d82c",
+		"name": "E-commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17993949"
+	},
+	"item": [
+		{
+			"name": "producer",
+			"item": [
+				{
+					"name": "enivar purchase order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderId\": \"a35e5447-cc4b-30ff-aa14-a02a82417374\",\n    \"customerId\": \"bbb522d7-cc4b-30ff-aa14-a02a82410215\",\n    \"amount\": 100.00,\n    \"status\": \"PAID\",\n    \"date\": \"2024-09-20T14:30:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8088/api/v1/purchase-orders",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"api",
+								"v1",
+								"purchase-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enviar purchase order em batch",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8088/api/v1/purchase-orders/batch?batchSize=1000",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"api",
+								"v1",
+								"purchase-orders",
+								"batch"
+							],
+							"query": [
+								{
+									"key": "batchSize",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "consumer",
+			"item": [
+				{
+					"name": "Obter todas as ordens (com paginação):",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/orders?page=0&size=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter uma ordem por orderId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/orders/{orderId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{orderId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter ordens por customerId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/orders/customer/{customerId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"customer",
+								"{customerId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter ordens por status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/orders/status/{status}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"status",
+								"{status}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Excluir uma ordem por orderId",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/orders/{orderId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{orderId}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
