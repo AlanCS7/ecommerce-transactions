@@ -58,6 +58,84 @@ services:
     networks:
       - app-network
 
+  producer-service:
+    build:
+      context: ./producer-service
+      dockerfile: Dockerfile
+    container_name: producer-service
+    ports:
+      - "8088:8088"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-container:9092
+    networks:
+      - app-network
+
+  consumer-service:
+    build:
+      context: ./consumer-service
+      dockerfile: Dockerfile
+    container_name: consumer-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+      - mongo
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongo-container
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-container:9092
+    networks:
+      - app-network
+
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    container_name: fluent-bit
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    ports:
+      - "2020:2020"
+    networks:
+      - app-network
+    depends_on:
+      - kafka
+      - splunk
+    restart: always
+
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_PASSWORD: password
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    volumes:
+      - splunk_data:/opt/splunk/var
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+    volumes:
+      - ./consumer-service/src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
 networks:
   app-network:
     driver: bridge
@@ -66,4 +144,6 @@ volumes:
   kafka-data:
     driver: local
   mongo-data:
+    driver: local
+  splunk_data:
     driver: local
