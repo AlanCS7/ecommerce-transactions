@@ -34,6 +34,8 @@ Os dados das ordens são armazenados em uma coleção chamada `orders`, que cont
 
 Os pedidos são modelados como documentos na coleção orders, contendo campos como orderId, customerId, amount, status, timestamp, e um campo createdAt para gerenciamento de TTL (Time to Live). Essa modelagem permite que os dados sejam consultados rapidamente e gerenciados de forma eficiente, com a vantagem adicional de permitir a expiração automática de pedidos antigos.
 
+### Desenho da solução
+![Screenshot from 2024-09-23 03-56-52](https://github.com/user-attachments/assets/0119017b-5e93-447c-aa42-fbe8e48fad84)
 
 ## Como Rodar o Sistema Localmente
 
